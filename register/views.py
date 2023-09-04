@@ -1,10 +1,11 @@
 from django.http import FileResponse, HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Competition, ReferralCode, Team, Member
 from django.core.exceptions import ObjectDoesNotExist
 # from .gdrive import drive  # Import the configured PyDrive instance
+from .custom_storage import MinioStorage
+from os.path import join
 
 # Create your views here.
 
@@ -123,8 +124,34 @@ def register_multipart(request):
 
 
 def get_uploads(request, team_name, filename):
-    file = open(f'uploads/{team_name}/{filename}', 'rb')
-    return FileResponse(file)
+    minio_storage = MinioStorage()
+    # print(dir(minio_storage))
+    file_path = f'uploads/{team_name}/{filename}'
+    print(f'HIHIII {file_path}')
+    file = minio_storage.open(name=file_path)
+
+    content_type = 'image/*'
+    ext = filename.split(".")[1]
+    if ext == 'png':
+        content_type = 'image/png'
+    elif ext in ['jpg', 'jpeg']:
+        content_type = 'image/jpeg'
+
+    response = FileResponse(file)
+    response['Content-Type'] = content_type
+
+    return response
+    # return HttpResponse('hello')
+
+    # try:
+    #     file = minio_storage.open(name=file_path)
+    #     return FileResponse(file)
+    # except Exception as e:
+    #     print(e)
+    #     return JsonResponse({'error': 'File not found'}, status=404)
+
+    # file = open(f'uploads/{team_name}/{filename}', 'rb')
+    # return FileResponse(file)
 
 
 # @csrf_exempt

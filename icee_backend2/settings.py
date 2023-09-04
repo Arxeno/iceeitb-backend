@@ -223,3 +223,4 @@ MINIO_SECRET_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
 MINIO_BUCKET_NAME = 'icee-storage'
 
 DEFAULT_FILE_STORAGE = 'register.custom_storage.MinioStorage'
+DJANGO_DOMAIN = 'http://localhost:5000'

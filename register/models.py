@@ -58,6 +58,7 @@ class Team(models.Model):
         verbose_name='Bukti foto pembayaran', upload_to=upload_payment)
 
     def __str__(self):
+        print(self.payment_proof)
         return f'{self.competition.name}_{self.team_name}'
 
 

@@ -25,9 +25,10 @@ class MinioStorage(Storage):
             response = self.minio_client.get_object(
                 bucket_name=settings.MINIO_BUCKET_NAME, object_name=name)
 
-            file = File(response.data)
+            file = File(response)
 
             file.name = name
+            return file
         except S3Error as e:
             # Handle any exceptions raised during the file retrieval
             raise IOError(f"Error opening file from Minio: {str(e)}")
@@ -82,4 +83,4 @@ class MinioStorage(Storage):
 
     def url(self, name):
         # Generate and return a URL for the file
-        pass
+        return f'{settings.DJANGO_DOMAIN}/{name}'
