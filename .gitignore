@@ -2,5 +2,8 @@ django_icee/
 
 
 .vscode
+.env
+
+uploads/
 
 TES SKENARIO.txt

@@ -4,6 +4,28 @@ import uuid
 # Create your models here.
 
 
+class Competition(models.Model):
+    competition_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(verbose_name='Competition', unique=True)
+    min_capacity = models.IntegerField()
+    max_capacity = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+
+class ReferralCode(models.Model):
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    code = models.CharField(verbose_name='Kode Referral')
+    is_redeemed = models.BooleanField(
+        verbose_name='Sudah digunakan? (Ceklis berarti sudah)')
+
+    def __str__(self):
+        return self.code
+
+
 class Team(models.Model):
     def upload_payment(instance, filename):
         ext = filename.split(".")[-1]
@@ -15,6 +37,8 @@ class Team(models.Model):
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     # Team Registration
     team_name = models.CharField(unique=True)
+    competition = models.ForeignKey(
+        Competition, verbose_name='Cabang lomba', on_delete=models.DO_NOTHING)
     total_team_members = models.IntegerField(editable=False, default=0)
 
     # Payment
@@ -25,7 +49,7 @@ class Team(models.Model):
         verbose_name='Bukti foto pembayaran', upload_to=upload_payment)
 
     def __str__(self):
-        return self.team_name
+        return f'{self.competition.name}_{self.team_name}'
 
 
 ROLE_CHOICES = [
@@ -35,29 +59,28 @@ ROLE_CHOICES = [
 
 
 class Member(models.Model):
+    def get_team_name(self):
+        return self.team_id.team_name
+
     def upload_photo_id(instance, filename):
         ext = filename.split(".")[-1]
-        team_name = Team.objects.get().team_name
 
-        return f'uploads/{team_name}/{instance.role}_{instance.name}_KTM.{ext}'
+        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_KTM.{ext}'
 
     def upload_photo_proof(instance, filename):
         ext = filename.split(".")[-1]
-        team_name = Team.objects.get().team_name
 
-        return f'uploads/{team_name}/{instance.role}_{instance.name}_Bukti Mahasiswa aktif.{ext}'
+        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_Bukti Mahasiswa aktif.{ext}'
 
     def upload_photo_3x4(instance, filename):
         ext = filename.split(".")[-1]
-        team_name = Team.objects.get().team_name
 
-        return f'uploads/{team_name}/{instance.role}_{instance.name}_Foto 3x4.{ext}'
+        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_Foto 3x4.{ext}'
 
     def upload_photo_twibbon(instance, filename):
         ext = filename.split(".")[-1]
-        team_name = Team.objects.get().team_name
 
-        return f'uploads/{team_name}/{instance.role}_{instance.name}_Foto Twibbon.{ext}'
+        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_Foto Twibbon.{ext}'
 
     member_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
@@ -88,12 +111,4 @@ class Member(models.Model):
     #     team_name = ''
 
     def __str__(self):
-        return f'{self.team_id.team_name}_{self.role}_{self.name}'
-
-
-class ReferralCode(models.Model):
-    id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    code = models.CharField(verbose_name='Kode Referral')
-    is_redeemed = models.BooleanField(
-        verbose_name='Sudah digunakan? (Ceklis berarti sudah)')
+        return f'{self.team_id.competition}_{self.team_id.team_name}_{self.role}_{self.name}'

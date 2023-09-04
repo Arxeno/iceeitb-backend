@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(!+m!#%n)9qojp56#m7(vi0^$gu6vs(wbg(pho5m9c^x6*!#c%'
+SECRET_KEY = getenv('DJANGO_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -74,27 +78,27 @@ WSGI_APPLICATION = 'icee_backend2.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'iceeitb',
-        'USER': 'iceeitb2024',
-        'PASSWORD': '8TkSis4QlmcV',
-        'HOST': 'ep-damp-darkness-98514520.ap-southeast-1.aws.neon.tech',
-        'PORT': '5432'
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'iceeitb',
-#         'USER': 'postgres',
-#         'PASSWORD': '123456',
-#         'HOST': 'localhost',
+#         'USER': 'iceeitb2024',
+#         'PASSWORD': '8TkSis4QlmcV',
+#         'HOST': 'ep-damp-darkness-98514520.ap-southeast-1.aws.neon.tech',
 #         'PORT': '5432'
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': getenv('DB_NAME'),
+        'USER': getenv('DB_USER'),
+        'PASSWORD': getenv('DB_PASS'),
+        'HOST': getenv('DB_URL'),
+        'PORT': '5432'
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

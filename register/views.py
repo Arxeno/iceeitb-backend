@@ -2,7 +2,8 @@ from django.http import FileResponse, HttpResponse, HttpResponseBadRequest, Json
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .models import Team, Member
+from .models import Competition, ReferralCode, Team, Member
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -48,19 +49,50 @@ def register_multipart(request):
             request_data = json.loads(request.FILES.get(
                 'jsonFile').read().decode('utf-8'))
         except:
-            return HttpResponseBadRequest('BAD REQUEST')\
+            return JsonResponse({"message": 'BAD REQUEST'}, status=400)
 
         print('helo')
 
         payment_proof = request.FILES.get('paymentProof')
 
-        new_team = Team(team_name=request_data["teamName"], payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
+        if "referralCode" in request_data:
+            try:
+                referral_code = ReferralCode.objects.get(
+                    code=request_data["referralCode"])
+
+                if (referral_code.is_redeemed):
+                    return JsonResponse({"error": "Token is already used."}, status=406)
+                else:
+                    referral_code.is_redeemed = True
+                    request_data['referralCode'] = referral_code
+                    referral_code.save()
+            except ObjectDoesNotExist:
+                return JsonResponse({"error": "Token is not exist."}, status=404)
+            except Exception as e:
+                print(e)
+                return JsonResponse({'error': 'Internal server error.'}, status=500)
+        else:
+            request_data['referralCode'] = ''
+
+        if 'competition' in request_data:
+            try:
+                competition = Competition.objects.get(
+                    name=request_data['competition'])
+            except ObjectDoesNotExist:
+                return JsonResponse({"error": "Unknown competition."}, status=404)
+            except Exception as e:
+                print(e)
+                return JsonResponse({'error': 'Internal server error.'}, status=500)
+        else:
+            return JsonResponse({'error': 'Field competition is empty.'}, status=400)
+
+        new_team = Team(team_name=request_data["teamName"], competition=competition, payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
                         payment_methods=request_data["paymentMethod"], payment_proof=payment_proof)
         new_team.save()
 
         members = request_data['members']
         if (len(members) < 2):
-            return HttpResponseBadRequest('MINIMAL 2')
+            return JsonResponse({"error": 'Number of team should be above or equal 2.'}, status=400)
 
         for i in range(len(members)):
             if (i == 0):
@@ -74,9 +106,14 @@ def register_multipart(request):
             member_photo_twibbon = request.FILES.get(f'{key}Twibbon')
 
             new_member = Member(name=members[i]['name'], team_id=new_team, role=members[i]['role'], university=members[i]['university'], major=members[i]['major'], whatsapp_number=members[i]['WANumber'], email=members[i]['email'],
-                                address=members[i]['address'], student_id=members[i]['studentID'], active_student_proof=members[i]['activeStudentProof'], photo_3x4=members[i]['photo3x4'], photo_twibbon=members[i]['photoTwibbon'])
+                                address=members[i]['address'], student_id=member_student_id, active_student_proof=member_active_student_proof, photo_3x4=member_photo_3x4, photo_twibbon=member_photo_twibbon)
             new_member.save()
 
-        return HttpResponse('Success!')
+        return JsonResponse({"message": 'Success created team!'}, status=200)
     else:
-        return HttpResponseBadRequest('ONLY POST')
+        return JsonResponse({"message": 'ONLY POST'}, status=400)
+
+
+def get_uploads(request, team_name, filename):
+    file = open(f'uploads/{team_name}/{filename}', 'rb')
+    return FileResponse(file)
