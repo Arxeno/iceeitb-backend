@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Competition, ReferralCode, Team, Member
 from django.core.exceptions import ObjectDoesNotExist
+# from .gdrive import drive  # Import the configured PyDrive instance
 
 # Create your views here.
 
@@ -86,6 +87,13 @@ def register_multipart(request):
         else:
             return JsonResponse({'error': 'Field competition is empty.'}, status=400)
 
+        try:
+            # check if the team is already exist
+            query_team = Team.objects.get(team_name=request_data['teamName'])
+            return JsonResponse({"error": "Team is already exist"}, status=409)
+        except Exception as e:
+            pass
+
         new_team = Team(team_name=request_data["teamName"], competition=competition, payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
                         payment_methods=request_data["paymentMethod"], payment_proof=payment_proof)
         new_team.save()
@@ -117,3 +125,18 @@ def register_multipart(request):
 def get_uploads(request, team_name, filename):
     file = open(f'uploads/{team_name}/{filename}', 'rb')
     return FileResponse(file)
+
+
+# @csrf_exempt
+# def upload_to_google_drive(request):
+#     if request.method == 'POST' and request.FILES:
+#         uploaded_file = request.FILES['file']
+#         file_title = uploaded_file.name
+
+#         # Upload the file to Google Drive
+#         gdrive_file = drive.CreateFile({'title': file_title})
+#         gdrive_file.Upload()
+
+#         return JsonResponse({'message': f'File "{file_title}" uploaded to Google Drive successfully.'})
+
+#     return HttpResponseBadRequest('ERROR')

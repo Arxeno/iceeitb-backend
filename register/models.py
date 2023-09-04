@@ -1,5 +1,14 @@
 from django.db import models
 import uuid
+from os.path import join
+
+# from register.custom_storage import CustomMinioStorage
+# from gdstorage.storage import GoogleDriveStorage
+# import gdstorage
+from .custom_storage import MinioStorage
+
+# Define Google Drive Storage
+# gd_storage = GoogleDriveStorage()
 
 # Create your models here.
 
@@ -30,7 +39,7 @@ class Team(models.Model):
     def upload_payment(instance, filename):
         ext = filename.split(".")[-1]
 
-        return f'uploads/{instance.team_name}/payment.{ext}'
+        return join('uploads', instance.team_name, f'payment.{ext}')
 
     # FIELDS
     team_id = models.UUIDField(
@@ -65,22 +74,22 @@ class Member(models.Model):
     def upload_photo_id(instance, filename):
         ext = filename.split(".")[-1]
 
-        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_KTM.{ext}'
+        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_KTM.{ext}')
 
     def upload_photo_proof(instance, filename):
         ext = filename.split(".")[-1]
 
-        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_Bukti Mahasiswa aktif.{ext}'
+        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_Bukti Mahasiswa aktif.{ext}')
 
     def upload_photo_3x4(instance, filename):
         ext = filename.split(".")[-1]
 
-        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_Foto 3x4.{ext}'
+        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_Foto 3x4.{ext}')
 
     def upload_photo_twibbon(instance, filename):
         ext = filename.split(".")[-1]
 
-        return f'uploads/{instance.team_id.team_name}/{instance.role}_{instance.name}_Foto Twibbon.{ext}'
+        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_Foto Twibbon.{ext}')
 
     member_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)

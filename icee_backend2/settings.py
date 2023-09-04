@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from django.core.files.storage import Storage
+from minio import Minio
 from pathlib import Path
 from os import getenv
 from dotenv import load_dotenv
@@ -41,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'register'
+    'register',
 ]
 
 MIDDLEWARE = [
@@ -142,3 +144,82 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = False
+
+#
+# Google Drive Storage Settings
+#
+
+# GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = 'client_secrets.json'
+# GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'uploads/'
+
+# Environment variables
+# AWS_ACCESS_KEY_ID = 'N7R31RQV4PJH0E2DGBKB'
+# AWS_SECRET_ACCESS_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
+# AWS_STORAGE_BUCKET_NAME = 'icee-storage'
+# AWS_S3_SIGNATURE_NAME = 's3v4'
+# AWS_S3_REGION_NAME = getenv('AWS_S3_REGION_NAME')
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
+# AWS_S3_VERITY = True
+
+# settings.py
+
+# Import the necessary libraries
+
+# Custom storage backend using MinIO
+
+
+# class S3CompatibleStorage(Storage):
+#     def __init__(self, endpoint, access_key, secret_key, secure=True, bucket_name=None):
+#         self.endpoint = endpoint
+#         self.access_key = access_key
+#         self.secret_key = secret_key
+#         self.secure = secure
+#         self.bucket_name = bucket_name
+
+#     def _open(self, name, mode='rb'):
+#         # Implement opening files from the storage
+#         # You can use the MinIO Python library to interact with the storage here
+#         pass
+
+#     def _save(self, name, content):
+#         # Implement saving files to the storage
+#         # You can use the MinIO Python library to interact with the storage here
+#         pass
+
+#     def url(self, name):
+#         # Generate a URL for accessing the file in the storage
+#         # You can use the MinIO Python library to generate the URL here
+#         pass
+
+# # Configure the S3-compatible storage backend
+# S3_COMPATIBLE_STORAGE_ENDPOINT = 'https://is3.cloudhost.id'
+# S3_COMPATIBLE_STORAGE_ACCESS_KEY = 'N7R31RQV4PJH0E2DGBKB'
+# S3_COMPATIBLE_STORAGE_SECRET_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
+# S3_COMPATIBLE_STORAGE_BUCKET_NAME = 'icee-storage'
+
+# AWS_ACCESS_KEY_ID = 'N7R31RQV4PJH0E2DGBKB'
+# AWS_SECRET_ACCESS_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
+# AWS_STORAGE_BUCKET_NAME = 'icee-storage'
+# AWS_S3_ENDPOINT_URL = 'https://is3.cloudhost.id/'
+# AWS_S3_CUSTOM_DOMAIN = None
+
+# DEFAULT_FILE_STORAGE = 'icee_backend2.settings.S3CompatibleStorage'
+
+# Environment variables
+# AWS_ACCESS_KEY_ID = 'N7R31RQV4PJH0E2DGBKB'
+# AWS_SECRET_ACCESS_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
+# AWS_STORAGE_BUCKET_NAME = 'icee-storage'
+# AWS_S3_SIGNATURE_NAME = 's3v4'
+# AWS_S3_REGION_NAME = getenv('AWS_S3_REGION_NAME')
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
+# AWS_S3_VERITY = True
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+MINIO_ENDPOINT = 'is3.cloudhost.id'
+MINIO_ACCESS_KEY = 'N7R31RQV4PJH0E2DGBKB'
+MINIO_SECRET_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
+MINIO_BUCKET_NAME = 'icee-storage'
+
+DEFAULT_FILE_STORAGE = 'register.custom_storage.MinioStorage'
