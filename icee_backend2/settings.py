@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from django.core.files.storage import Storage
 from minio import Minio
 from pathlib import Path
-from os import getenv
+from os import getenv, path
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'icee_backend2.wsgi.application'
+WSGI_APPLICATION = 'icee_backend2.wsgi.app'
 
 
 # Database
@@ -136,7 +136,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = path.join(BASE_DIR, 'static'),
+STATIC_ROOT = path.join(BASE_DIR, 'staticfiles_build', 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -223,4 +225,4 @@ MINIO_SECRET_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
 MINIO_BUCKET_NAME = 'icee-storage'
 
 DEFAULT_FILE_STORAGE = 'register.custom_storage.MinioStorage'
-DJANGO_DOMAIN = 'http://localhost:5000'
+DJANGO_DOMAIN = getenv('DJANGO_DOMAIN')
