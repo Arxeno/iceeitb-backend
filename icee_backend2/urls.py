@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 admin.site.site_header = 'ICEE ITB 2024 CMS'
 admin.site.site_title = 'ICEE 2024'
@@ -23,4 +25,4 @@ admin.site.site_title = 'ICEE 2024'
 urlpatterns = [
     path('admin', admin.site.urls),
     path('', include('register.urls'))
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
