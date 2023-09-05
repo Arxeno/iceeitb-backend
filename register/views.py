@@ -68,8 +68,8 @@ def register_multipart(request):
                     referral_code.is_redeemed = True
                     request_data['referralCode'] = referral_code
                     referral_code.save()
-            except ObjectDoesNotExist:
-                return JsonResponse({"error": "Token is not exist."}, status=404)
+            # except ObjectDoesNotExist:
+            #     return JsonResponse({"error": "Token is not exist."}, status=404)
             except Exception as e:
                 print(e)
                 return JsonResponse({'error': 'Internal server error.'}, status=500)
