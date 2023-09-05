@@ -46,9 +46,10 @@ def register_multipart(request):
 
         # json_file = json.loads(request.FILES.get('jsonFile'))
         try:
-            print(json.loads(request.POST['jsonFile']))
-            # json_content =
             request_data = json.loads(request.POST['jsonFile'])
+            # print(json.loads(request.FILES['jsonFile']))
+            # json_content =
+            # request_data = json.loads(request.POST['jsonFile'])
         except:
             return JsonResponse({"error": 'BAD REQUEST'}, status=400)
 
