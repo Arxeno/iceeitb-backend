@@ -29,9 +29,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv('DJANGO_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+
+CORS_ALLOWED_ORIGINS = [
+    'https://iceeitb.site',
+    'https://iceeitb.com'
+]
 
 ALLOWED_HOSTS = [
     'iceeitb-backend.vercel.app',
