@@ -130,7 +130,7 @@ def register_multipart(request):
 
 
 def get_uploads(request, team_name, filename):
-    return HttpResponse('hello')
+    # return HttpResponse(f'tes\n{team_name}\n{filename}')
     minio_storage = MinioStorage()
     # print(dir(minio_storage))
     file_path = f'uploads/{team_name}/{filename}'
