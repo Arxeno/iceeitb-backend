@@ -72,25 +72,49 @@ class Member(models.Model):
     def get_team_name(self):
         return self.team_id.team_name
 
+    # Generate names
+    def generate_name_photo_id(self, ext):
+        return f'{self.role}_{self.name}_KTM.{ext}'
+
+    def generate_name_photo_proof(self, ext):
+        return f'{self.role}_{self.name}_Bukti Mahasiswa aktif.{ext}'
+
+    def generate_name_photo_3x4(self, ext):
+        return f'{self.role}_{self.name}_Foto 3x4.{ext}'
+
+    def generate_name_photo_twibbon(self, ext):
+        return f'{self.role}_{self.name}_Foto Twibbon.{ext}'
+
+    # Generate paths
     def upload_photo_id(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_KTM.{ext}')
+        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_id(ext))
 
     def upload_photo_proof(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_Bukti Mahasiswa aktif.{ext}')
+        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_proof(ext))
 
     def upload_photo_3x4(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_Foto 3x4.{ext}')
+        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_3x4(ext))
 
     def upload_photo_twibbon(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, f'{instance.role}_{instance.name}_Foto Twibbon.{ext}')
+        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_twibbon(ext))
+
+    def save_image_files(self, content_files, exts):
+        self.student_id.save(
+            self.generate_name_photo_id(exts[0]), content_files[0])
+        self.active_student_proof.save(
+            self.generate_name_photo_proof(exts[1]), content_files[1])
+        self.photo_3x4.save(self.generate_name_photo_3x4(
+            exts[2]), content_files[2])
+        self.photo_twibbon.save(
+            self.generate_name_photo_twibbon(exts[3]), content_files[3])
 
     member_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)

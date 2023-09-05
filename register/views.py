@@ -158,7 +158,13 @@ def register_multipart(request):
             photo_twibbon_content.content_type = member_photo_twibbon['contentType']
 
             new_member = Member(name=members[i]['name'], team_id=new_team, role=members[i]['role'], university=members[i]['university'], major=members[i]['major'], whatsapp_number=members[i]['WANumber'], email=members[i]['email'],
-                                address=members[i]['address'], student_id=student_id_content, active_student_proof=active_student_proof_content, photo_3x4=photo_3x4_content, photo_twibbon=photo_twibbon_content)
+                                address=members[i]['address'])
+
+            content_files = [student_id_content, active_student_proof_content,
+                             photo_3x4_content, photo_twibbon_content]
+            exts = [member_student_id['ext'], member_active_student_proof['ext'],
+                    member_photo_3x4['ext'], member_photo_twibbon['ext']]
+            new_member.save_image_files(content_files, exts)
             new_member.save()
 
         return JsonResponse({"message": f'Sukses mendaftarkan tim!', "statusCode": 201}, status=201)
