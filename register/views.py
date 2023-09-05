@@ -127,7 +127,7 @@ def register_multipart(request):
                                 address=members[i]['address'], student_id=member_student_id, active_student_proof=member_active_student_proof, photo_3x4=member_photo_3x4, photo_twibbon=member_photo_twibbon)
             new_member.save()
 
-        return JsonResponse({"message": f'Sukses mendaftarkan tim!', "statusCode": 200}, status=200)
+        return JsonResponse({"message": f'Sukses mendaftarkan tim!', "statusCode": 201}, status=201)
     else:
         return JsonResponse({"message": 'ONLY POST', "statusCode": 400}, status=400)
 
