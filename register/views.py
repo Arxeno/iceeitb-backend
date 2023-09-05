@@ -58,25 +58,25 @@ def register_multipart(request):
 
         payment_proof = request.FILES.get('paymentProof')
 
-        if "referralCode" in request_data:
+        if "referralCode" in request_data and request_data['referralCode']:
             try:
                 referral_code = ReferralCode.objects.get(
                     code=request_data["referralCode"])
 
                 if (referral_code.is_redeemed):
-                    additional_message += 'Token sudah digunakan.'
-                    # return JsonResponse({"error": "Token is already used."}, status=406)
+                    # additional_message += 'Token sudah digunakan.'
+                    return JsonResponse({"error": "Token sudah digunakan."}, status=406)
                 else:
                     referral_code.is_redeemed = True
                     request_data['referralCode'] = referral_code
                     referral_code.save()
             except ObjectDoesNotExist:
-                additional_message += 'Token yang anda masukkan tidak tersedia.'
-                # return JsonResponse({"error": "Token is not exist."}, status=404)
+                # additional_message += 'Token yang anda masukkan tidak tersedia.'
+                return JsonResponse({"error": "Token yang anda masukkan tidak tersedia."}, status=404)
             except Exception as e:
                 print(e)
-                additional_message += 'Token tidak bisa digunakan.'
-                # return JsonResponse({'error': 'Internal server error.'}, status=500)
+                # additional_message += 'Token tidak bisa digunakan.'
+                return JsonResponse({'error': 'Token tidak bisa digunakan.'}, status=500)
         else:
             request_data['referralCode'] = ''
 
