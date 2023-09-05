@@ -54,6 +54,7 @@ def register_multipart(request):
             return JsonResponse({"error": 'BAD REQUEST'}, status=400)
 
         print('helo')
+        additional_message = ''
 
         payment_proof = request.FILES.get('paymentProof')
 
@@ -63,16 +64,18 @@ def register_multipart(request):
                     code=request_data["referralCode"])
 
                 if (referral_code.is_redeemed):
-                    return JsonResponse({"error": "Token is already used."}, status=406)
+                    additional_message += 'Token sudah digunakan.'
+                    # return JsonResponse({"error": "Token is already used."}, status=406)
                 else:
                     referral_code.is_redeemed = True
                     request_data['referralCode'] = referral_code
                     referral_code.save()
-            # except ObjectDoesNotExist:
-            #     return JsonResponse({"error": "Token is not exist."}, status=404)
+            except ObjectDoesNotExist:
+                additional_message += 'Token yang anda masukkan tidak tersedia.'
+                # return JsonResponse({"error": "Token is not exist."}, status=404)
             except Exception as e:
                 print(e)
-                pass
+                additional_message += 'Token tidak bisa digunakan.'
                 # return JsonResponse({'error': 'Internal server error.'}, status=500)
         else:
             request_data['referralCode'] = ''
@@ -101,9 +104,9 @@ def register_multipart(request):
         members = request_data['members']
         if (len(members) < min_capacity or len(members) > max_capacity):
             if (min_capacity == max_capacity):
-                return JsonResponse({'error': f'Number of team should be {min_capacity}'})
+                return JsonResponse({'error': f'Jumlah anggota tim harus {min_capacity} (termasuk leader).'})
 
-            return JsonResponse({"error": f'Number of team should be between {min_capacity} and {max_capacity}.'}, status=400)
+            return JsonResponse({"error": f'Jumlah anggota tim harus berada di antara {min_capacity} dan {max_capacity} (termasuk leader).'}, status=400)
 
         new_team = Team(team_name=request_data["teamName"], competition=competition, payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
                         payment_methods=request_data["paymentMethod"], payment_proof=payment_proof)
@@ -124,7 +127,7 @@ def register_multipart(request):
                                 address=members[i]['address'], student_id=member_student_id, active_student_proof=member_active_student_proof, photo_3x4=member_photo_3x4, photo_twibbon=member_photo_twibbon)
             new_member.save()
 
-        return JsonResponse({"message": 'Success created team!'}, status=200)
+        return JsonResponse({"message": f'Sukses mendaftarkan tim!'}, status=200)
     else:
         return JsonResponse({"message": 'ONLY POST'}, status=400)
 
