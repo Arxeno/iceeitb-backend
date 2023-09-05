@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv('DJANGO_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
@@ -41,7 +41,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 ALLOWED_HOSTS = [
     'iceeitb-backend.vercel.app',
-    getenv('FE_URL')
+    getenv('FE_URL'),
+    'localhost'
 ]
 
 
@@ -87,7 +88,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'icee_backend2.wsgi.application'
+WSGI_APPLICATION = 'icee_backend2.wsgi.app'
 
 
 # Database
@@ -239,3 +240,5 @@ MINIO_BUCKET_NAME = 'icee-storage'
 
 DEFAULT_FILE_STORAGE = 'register.custom_storage.MinioStorage'
 DJANGO_DOMAIN = getenv('DJANGO_DOMAIN')
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800 * 2

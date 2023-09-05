@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 # from .gdrive import drive  # Import the configured PyDrive instance
 from .custom_storage import MinioStorage
 from os.path import join
+from django.core.files.base import ContentFile
+import base64
 
 # Create your views here.
 
@@ -45,6 +47,7 @@ def register_multipart(request):
         # uploaded_files = request.FILES.getlist('foto')
 
         # json_file = json.loads(request.FILES.get('jsonFile'))
+        request_data = json.loads(request.POST['jsonFile'])
         try:
             request_data = json.loads(request.POST['jsonFile'])
             # print(json.loads(request.FILES['jsonFile']))
@@ -55,8 +58,6 @@ def register_multipart(request):
 
         print('helo')
         additional_message = ''
-
-        payment_proof = request.FILES.get('paymentProof')
 
         if "referralCode" in request_data and request_data['referralCode']:
             try:
@@ -80,6 +81,7 @@ def register_multipart(request):
         else:
             request_data['referralCode'] = ''
 
+        print('one')
         if 'competition' in request_data:
             try:
                 competition = Competition.objects.get(
@@ -101,6 +103,7 @@ def register_multipart(request):
         except Exception as e:
             pass
 
+        print('two')
         members = request_data['members']
         if (len(members) < min_capacity or len(members) > max_capacity):
             if (min_capacity == max_capacity):
@@ -108,9 +111,22 @@ def register_multipart(request):
 
             return JsonResponse({"message": f'Jumlah anggota tim harus berada di antara {min_capacity} dan {max_capacity} (termasuk leader).', "statusCode": 400}, status=400)
 
+        # payment
+        print('three')
+        payment_proof = json.loads(request.POST['paymentProof'])
+        print('four')
+        # print(payment_proof['base64'])
+        payment_content = ContentFile(
+            base64.b64decode(payment_proof['base64']))
+        # payment_content.name = f'payment.{payment_proof["ext"]}'
+        payment_content.content_type = payment_proof['contentType']
+        print('five')
+
         new_team = Team(team_name=request_data["teamName"], competition=competition, payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
-                        payment_methods=request_data["paymentMethod"], payment_proof=payment_proof)
+                        payment_methods=request_data["paymentMethod"])
         new_team.save()
+        new_team.payment_proof.save(
+            f'payment.{payment_proof["ext"]}', payment_content)
 
         for i in range(len(members)):
             if (i == 0):
@@ -118,13 +134,31 @@ def register_multipart(request):
             else:
                 key = f'member{i}'
 
-            member_student_id = request.FILES.get(f'{key}KTM')
-            member_active_student_proof = request.FILES.get(f'{key}Active')
-            member_photo_3x4 = request.FILES.get(f'{key}3x4')
-            member_photo_twibbon = request.FILES.get(f'{key}Twibbon')
+            # student id
+            member_student_id = json.loads(request.POST[f'{key}KTM'])
+            student_id_content = ContentFile(
+                base64.b64decode(member_student_id['base64']))
+            student_id_content.content_type = member_student_id['contentType']
+            # active student proof
+            member_active_student_proof = json.loads(
+                request.POST[f'{key}Active'])
+            active_student_proof_content = ContentFile(
+                base64.b64decode(member_active_student_proof['base64']))
+            active_student_proof_content.content_type = member_active_student_proof[
+                'contentType']
+            # photo 3x4
+            member_photo_3x4 = json.loads(request.POST[f'{key}3x4'])
+            photo_3x4_content = ContentFile(
+                base64.b64decode(member_photo_3x4['base64']))
+            photo_3x4_content.content_type = member_photo_3x4['contentType']
+            # twibbon
+            member_photo_twibbon = json.loads(request.POST[f'{key}Twibbon'])
+            photo_twibbon_content = ContentFile(
+                base64.b64decode(member_photo_twibbon['base64']))
+            photo_twibbon_content.content_type = member_photo_twibbon['contentType']
 
             new_member = Member(name=members[i]['name'], team_id=new_team, role=members[i]['role'], university=members[i]['university'], major=members[i]['major'], whatsapp_number=members[i]['WANumber'], email=members[i]['email'],
-                                address=members[i]['address'], student_id=member_student_id, active_student_proof=member_active_student_proof, photo_3x4=member_photo_3x4, photo_twibbon=member_photo_twibbon)
+                                address=members[i]['address'], student_id=student_id_content, active_student_proof=active_student_proof_content, photo_3x4=photo_3x4_content, photo_twibbon=photo_twibbon_content)
             new_member.save()
 
         return JsonResponse({"message": f'Sukses mendaftarkan tim!', "statusCode": 201}, status=201)
