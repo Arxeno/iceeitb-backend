@@ -226,9 +226,9 @@ def register_team_payment(request, team_id):
 
 @csrf_exempt
 def register_member_ktm(request, member_id):
-    if request.methods == 'POST':
+    if request.method == 'POST':
         try:
-            ktm = request.FILES.get('paymentProof')
+            ktm = request.FILES.get('memberKTM')
 
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.student_id.save(ktm)
@@ -241,9 +241,9 @@ def register_member_ktm(request, member_id):
 
 @csrf_exempt
 def register_member_active(request, member_id):
-    if request.methods == 'POST':
+    if request.method == 'POST':
         try:
-            aktif = request.FILES.get('paymentProof')
+            aktif = request.FILES.get('memberActive')
 
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.active_student_proof.save(aktif)
@@ -256,9 +256,9 @@ def register_member_active(request, member_id):
 
 @csrf_exempt
 def register_member_3x4(request, member_id):
-    if request.methods == 'POST':
+    if request.method == 'POST':
         try:
-            photo3x4 = request.FILES.get('paymentProof')
+            photo3x4 = request.FILES.get('member3x4')
 
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.photo_3x4.save(photo3x4)
@@ -271,9 +271,9 @@ def register_member_3x4(request, member_id):
 
 @csrf_exempt
 def register_member_twibbon(request, member_id):
-    if request.methods == 'POST':
+    if request.method == 'POST':
         try:
-            twibbon = request.FILES.get('paymentProof')
+            twibbon = request.FILES.get('memberTwibbon')
 
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.student_id.save(twibbon)
