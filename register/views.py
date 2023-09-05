@@ -80,6 +80,8 @@ def register_multipart(request):
             try:
                 competition = Competition.objects.get(
                     name=request_data['competition'])
+                min_capacity = competition.min_capacity
+                max_capacity = competition.max_capacity
             except ObjectDoesNotExist:
                 return JsonResponse({"error": "Unknown competition."}, status=404)
             except Exception as e:
@@ -95,13 +97,16 @@ def register_multipart(request):
         except Exception as e:
             pass
 
+        members = request_data['members']
+        if (len(members) < min_capacity or len(members) > max_capacity):
+            if (min_capacity == max_capacity):
+                return JsonResponse({'error': f'Number of team should be {min_capacity}'})
+
+            return JsonResponse({"error": f'Number of team should be between {min_capacity} and {max_capacity}.'}, status=400)
+
         new_team = Team(team_name=request_data["teamName"], competition=competition, payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
                         payment_methods=request_data["paymentMethod"], payment_proof=payment_proof)
         new_team.save()
-
-        members = request_data['members']
-        if (len(members) < 2):
-            return JsonResponse({"error": 'Number of team should be above or equal 2.'}, status=400)
 
         for i in range(len(members)):
             if (i == 0):
