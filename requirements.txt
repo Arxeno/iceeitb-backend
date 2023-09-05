@@ -6,10 +6,12 @@ charset-normalizer==3.2.0
 Django==4.2.4
 django-storages==1.13.2
 google-auth-httplib2==0.1.0
+gunicorn==21.2.0
 httplib2==0.22.0
 idna==3.4
 jmespath==1.0.1
 minio==7.1.16
+packaging==23.1
 Pillow==10.0.0
 protobuf==4.24.2
 psycopg2-binary==2.9.7
