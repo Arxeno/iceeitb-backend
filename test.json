@@ -1,0 +1,26 @@
+{
+  "teamName": "Sipilin",
+  "competition": "BCC",
+  "totalPayment": 10000,
+  "paymentMethod": "BCA",
+  "members": [
+    {
+      "name": "Budi",
+      "university": "Institut Teknologi Bandung",
+      "major": "Teknik Sipil",
+      "WANumber": "08123456789",
+      "email": "test@gmail.com",
+      "address": "Jalan Sudirman No.4",
+      "role": "LEADER"
+    },
+    {
+      "name": "Cheryl",
+      "university": "Institut Teknologi Bandung",
+      "major": "Teknik Sipil",
+      "WANumber": "08123456789",
+      "email": "test@gmail.com",
+      "address": "Jalan Sudirman No.4",
+      "role": "MEMBER"
+    }
+  ]
+}
