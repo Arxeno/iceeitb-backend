@@ -22,6 +22,7 @@ class MinioStorage(Storage):
 
     def _open(self, name, mode='rb'):
         try:
+            print(f'FETCH IMAGE {name}')
             response = self.minio_client.get_object(
                 bucket_name=settings.MINIO_BUCKET_NAME, object_name=name)
 
