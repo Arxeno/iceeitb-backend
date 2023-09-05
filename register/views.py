@@ -51,7 +51,7 @@ def register_multipart(request):
             # json_content =
             # request_data = json.loads(request.POST['jsonFile'])
         except:
-            return JsonResponse({"error": 'BAD REQUEST'}, status=400)
+            return JsonResponse({"message": 'BAD REQUEST', "statusCode": 400}, status=400)
 
         print('helo')
         additional_message = ''
@@ -65,18 +65,18 @@ def register_multipart(request):
 
                 if (referral_code.is_redeemed):
                     # additional_message += 'Referral code sudah digunakan.'
-                    return JsonResponse({"error": "Referral code sudah digunakan."}, status=406)
+                    return JsonResponse({"message": "Referral code sudah digunakan.", "statusCode": 406}, status=406)
                 else:
                     referral_code.is_redeemed = True
                     request_data['referralCode'] = referral_code
                     referral_code.save()
             except ObjectDoesNotExist:
                 # additional_message += 'Referral code yang anda masukkan tidak tersedia.'
-                return JsonResponse({"error": "Referral code yang anda masukkan tidak tersedia."}, status=404)
+                return JsonResponse({"message": "Referral code yang anda masukkan tidak tersedia.", "statusCode": 404}, status=404)
             except Exception as e:
                 print(e)
                 # additional_message += 'Referral code tidak bisa digunakan.'
-                return JsonResponse({'error': 'Referral code tidak bisa digunakan.'}, status=500)
+                return JsonResponse({"message": 'Referral code tidak bisa digunakan.', "statusCode": 500}, status=500)
         else:
             request_data['referralCode'] = ''
 
@@ -87,26 +87,26 @@ def register_multipart(request):
                 min_capacity = competition.min_capacity
                 max_capacity = competition.max_capacity
             except ObjectDoesNotExist:
-                return JsonResponse({"error": "Unknown competition."}, status=404)
+                return JsonResponse({"message": "Unknown competition.", "statusCode": 404}, status=404)
             except Exception as e:
                 print(e)
-                return JsonResponse({'error': 'Internal server error.'}, status=500)
+                return JsonResponse({"message": 'Internal server error.', "statusCode": 500}, status=500)
         else:
-            return JsonResponse({'error': 'Field competition is empty.'}, status=400)
+            return JsonResponse({"message": 'Field competition is empty.', "statusCode": 400}, status=400)
 
         try:
             # check if the team is already exist
             query_team = Team.objects.get(team_name=request_data['teamName'])
-            return JsonResponse({"error": "Team is already exist"}, status=409)
+            return JsonResponse({"message": "Team is already exist", "statusCode": 409}, status=409)
         except Exception as e:
             pass
 
         members = request_data['members']
         if (len(members) < min_capacity or len(members) > max_capacity):
             if (min_capacity == max_capacity):
-                return JsonResponse({'error': f'Jumlah anggota tim harus {min_capacity} (termasuk leader).'})
+                return JsonResponse({"message": f'Jumlah anggota tim harus {min_capacity} (termasuk leader).', "statusCode": 400}, status=400)
 
-            return JsonResponse({"error": f'Jumlah anggota tim harus berada di antara {min_capacity} dan {max_capacity} (termasuk leader).'}, status=400)
+            return JsonResponse({"message": f'Jumlah anggota tim harus berada di antara {min_capacity} dan {max_capacity} (termasuk leader).', "statusCode": 400}, status=400)
 
         new_team = Team(team_name=request_data["teamName"], competition=competition, payment_total=request_data["totalPayment"], referral_code=request_data["referralCode"],
                         payment_methods=request_data["paymentMethod"], payment_proof=payment_proof)
@@ -127,9 +127,9 @@ def register_multipart(request):
                                 address=members[i]['address'], student_id=member_student_id, active_student_proof=member_active_student_proof, photo_3x4=member_photo_3x4, photo_twibbon=member_photo_twibbon)
             new_member.save()
 
-        return JsonResponse({"message": f'Sukses mendaftarkan tim!'}, status=200)
+        return JsonResponse({"message": f'Sukses mendaftarkan tim!', "statusCode": 200}, status=200)
     else:
-        return JsonResponse({"message": 'ONLY POST'}, status=400)
+        return JsonResponse({"message": 'ONLY POST', "statusCode": 400}, status=400)
 
 
 def get_uploads(request, team_name, filename):
