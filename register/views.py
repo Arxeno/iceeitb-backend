@@ -72,7 +72,8 @@ def register_multipart(request):
             #     return JsonResponse({"error": "Token is not exist."}, status=404)
             except Exception as e:
                 print(e)
-                return JsonResponse({'error': 'Internal server error.'}, status=500)
+                pass
+                # return JsonResponse({'error': 'Internal server error.'}, status=500)
         else:
             request_data['referralCode'] = ''
 
