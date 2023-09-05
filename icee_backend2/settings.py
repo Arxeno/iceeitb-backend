@@ -34,10 +34,10 @@ DEBUG = False
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    'https://iceeitb.site',
-    'https://iceeitb.com'
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'https://iceeitb.site',
+#     'https://iceeitb.com'
+# ]
 
 ALLOWED_HOSTS = [
     'iceeitb-backend.vercel.app',
