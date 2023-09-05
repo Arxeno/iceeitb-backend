@@ -1,0 +1,1 @@
+web: gunicorn 'icee_backend2.wsgi'
