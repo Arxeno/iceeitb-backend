@@ -36,10 +36,20 @@ class ReferralCode(models.Model):
 
 
 class Team(models.Model):
+    def generate_name_payment(self, ext):
+        return f'payment.{ext}'
+
     def upload_payment(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_name, f'payment.{ext}')
+        # return join('uploads', instance.team_name, instance.generate_name_payment(ext))
+        return f'uploads/{instance.team_name}/{instance.generate_name_payment(ext)}'
+
+    def save_payment_img(self, file):
+        ext = file.name.split('.')[-1]
+
+        self.payment_proof.save(
+            name=self.generate_name_payment(ext), content=file)
 
     # FIELDS
     team_id = models.UUIDField(
@@ -89,23 +99,27 @@ class Member(models.Model):
     def upload_photo_id(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_id(ext))
+        return f'uploads/{instance.team_id.team_name}/{instance.generate_name_photo_id(ext)}'
 
     def upload_photo_proof(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_proof(ext))
+        # return join('uploads', instance.team_id.team_name, instance.generate_name_photo_proof(ext))
+        return f'uploads/{instance.team_id.team_name}/{instance.generate_name_photo_proof(ext)}'
 
     def upload_photo_3x4(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_3x4(ext))
+        # return join('uploads', instance.team_id.team_name, instance.generate_name_photo_3x4(ext))
+        return f'uploads/{instance.team_id.team_name}/{instance.generate_name_photo_3x4(ext)}'
 
     def upload_photo_twibbon(instance, filename):
         ext = filename.split(".")[-1]
 
-        return join('uploads', instance.team_id.team_name, instance.generate_name_photo_twibbon(ext))
+        # return join('uploads', instance.team_id.team_name, instance.generate_name_photo_twibbon(ext))
+        return f'uploads/{instance.team_id.team_name}/{instance.generate_name_photo_twibbon(ext)}'
 
+    # save all files
     def save_image_files(self, content_files, exts):
         self.student_id.save(
             self.generate_name_photo_id(exts[0]), content_files[0])
@@ -115,6 +129,31 @@ class Member(models.Model):
             exts[2]), content_files[2])
         self.photo_twibbon.save(
             self.generate_name_photo_twibbon(exts[3]), content_files[3])
+
+    # save images
+    def save_ktm_img(self, file):
+        ext = file.name.split('.')[-1]
+
+        self.student_id.save(
+            name=self.generate_name_photo_id(ext), content=file)
+
+    def save_active_img(self, file):
+        ext = file.name.split('.')[-1]
+
+        self.active_student_proof.save(
+            name=self.generate_name_photo_proof(ext), content=file)
+
+    def save_3x4_img(self, file):
+        ext = file.name.split('.')[-1]
+
+        self.photo_3x4.save(
+            name=self.generate_name_photo_3x4(ext), content=file)
+
+    def save_twibbon_img(self, file):
+        ext = file.name.split('.')[-1]
+
+        self.active_student_proof.save(
+            name=self.generate_name_photo_proof(ext), content=file)
 
     member_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)

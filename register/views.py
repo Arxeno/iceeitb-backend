@@ -216,9 +216,9 @@ def register_team_payment(request, team_id):
             payment_proof = request.FILES.get('paymentProof')
 
             registered_team = Team.objects.get(team_id=team_id)
-            registered_team.payment_proof.save(payment_proof)
+            registered_team.save_payment_img(payment_proof)
             return JsonResponse({"message": "Success upload team images", "statusCode": 201}, status=201)
-        except:
+        except:  # TODO: tambah exception doesn exist
             return JsonResponse({"message": "Cannot find team", "statusCode": 400}, status=400)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
@@ -231,7 +231,7 @@ def register_member_ktm(request, member_id):
             ktm = request.FILES.get('memberKTM')
 
             registered_member = Member.objects.get(member_id=member_id)
-            registered_member.student_id.save(ktm)
+            registered_member.save_ktm_img(ktm)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
         except:
             return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
@@ -246,7 +246,7 @@ def register_member_active(request, member_id):
             aktif = request.FILES.get('memberActive')
 
             registered_member = Member.objects.get(member_id=member_id)
-            registered_member.active_student_proof.save(aktif)
+            registered_member.save_active_img(aktif)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
         except:
             return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
@@ -261,7 +261,7 @@ def register_member_3x4(request, member_id):
             photo3x4 = request.FILES.get('member3x4')
 
             registered_member = Member.objects.get(member_id=member_id)
-            registered_member.photo_3x4.save(photo3x4)
+            registered_member.save_3x4_img(photo3x4)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
         except:
             return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
@@ -276,7 +276,7 @@ def register_member_twibbon(request, member_id):
             twibbon = request.FILES.get('memberTwibbon')
 
             registered_member = Member.objects.get(member_id=member_id)
-            registered_member.student_id.save(twibbon)
+            registered_member.save_twibbon_img(twibbon)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
         except:
             return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
