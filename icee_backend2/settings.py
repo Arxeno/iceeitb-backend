@@ -87,7 +87,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'icee_backend2.wsgi.app'
+WSGI_APPLICATION = 'icee_backend2.wsgi.application'
 
 
 # Database
