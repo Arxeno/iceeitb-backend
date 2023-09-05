@@ -133,7 +133,7 @@ def get_uploads(request, team_name, filename):
     # return HttpResponse(f'tes\n{team_name}\n{filename}')
     minio_storage = MinioStorage()
     # print(dir(minio_storage))
-    file_path = f'uploads/{team_name}/{filename}'
+    file_path = f'uploads/{team_name.replace("%20", " ")}/{filename.replace("%20", " ")}'
     print(f'HIHIII {file_path}')
     file = minio_storage.open(name=file_path)
 
