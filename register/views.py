@@ -51,7 +51,7 @@ def register_multipart(request):
             request_data = json.loads(request.FILES.get(
                 'jsonFile').read().decode('utf-8'))
         except:
-            return JsonResponse({"message": 'BAD REQUEST'}, status=400)
+            return JsonResponse({"error": 'BAD REQUEST'}, status=400)
 
         print('helo')
 
