@@ -152,7 +152,7 @@ class Member(models.Model):
     def save_twibbon_img(self, file):
         ext = file.name.split('.')[-1]
 
-        self.active_student_proof.save(
+        self.photo_twibbon.save(
             name=self.generate_name_photo_proof(ext), content=file)
 
     member_id = models.UUIDField(
