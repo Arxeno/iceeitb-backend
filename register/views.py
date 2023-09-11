@@ -268,6 +268,19 @@ def register_member_3x4(request, member_id):
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
 
+@csrf_exempt
+def register_member_follow_instagram(request, member_id):
+    if request.method == 'POST':
+        try:
+            photo_follow_instagram = request.FILES.get('memberFollowInstagram')
+
+            registered_member = Member.objects.get(member_id=member_id)
+            registered_member.save_follow_instagram_img(photo_follow_instagram)
+            return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
+        except:
+            return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
+    else:
+        return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
 
 @csrf_exempt
 def register_member_twibbon(request, member_id):
