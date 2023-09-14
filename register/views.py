@@ -218,8 +218,10 @@ def register_team_payment(request, team_id):
             registered_team = Team.objects.get(team_id=team_id)
             registered_team.save_payment_img(payment_proof)
             return JsonResponse({"message": "Success upload team images", "statusCode": 201}, status=201)
-        except:  # TODO: tambah exception doesn exist
-            return JsonResponse({"message": "Cannot find team", "statusCode": 400}, status=400)
+        except ObjectDoesNotExist:  # TODO: tambah exception doesn exist
+            return JsonResponse({"message": "Cannot find team.", "statusCode": 400}, status=400)
+        except:
+            return JsonResponse({"message": "There is a problem in saving the payment photo.", "statusCode": 500}, status=500)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
 
@@ -233,8 +235,10 @@ def register_member_ktm(request, member_id):
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.save_ktm_img(ktm)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message": "Cannot find member.", "statusCode": 400}, status=400)
         except:
-            return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
+            return JsonResponse({"message": "There is a problem in saving the 'Student ID (KTM)' photo.", "statusCode": 500}, status=500)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
 
@@ -248,8 +252,10 @@ def register_member_active(request, member_id):
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.save_active_img(aktif)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message": "Cannot find member.", "statusCode": 400}, status=400)
         except:
-            return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
+            return JsonResponse({"message": "There is a problem in saving the 'Bukti Mahasiswa Aktif' photo.", "statusCode": 500}, status=500)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
 
@@ -263,10 +269,13 @@ def register_member_3x4(request, member_id):
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.save_3x4_img(photo3x4)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message": "Cannot find member.", "statusCode": 400}, status=400)
         except:
-            return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
+            return JsonResponse({"message": "There is a problem in saving the '3x4 Photo' photo.", "statusCode": 500}, status=500)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
+
 
 @csrf_exempt
 def register_member_follow_instagram(request, member_id):
@@ -277,10 +286,13 @@ def register_member_follow_instagram(request, member_id):
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.save_follow_instagram_img(photo_follow_instagram)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message": "Cannot find member.", "statusCode": 400}, status=400)
         except:
-            return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
+            return JsonResponse({"message": "There is a problem in saving the 'Bukti Follow Instagram ICEE ITB' photo.", "statusCode": 500}, status=500)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
+
 
 @csrf_exempt
 def register_member_twibbon(request, member_id):
@@ -291,7 +303,9 @@ def register_member_twibbon(request, member_id):
             registered_member = Member.objects.get(member_id=member_id)
             registered_member.save_twibbon_img(twibbon)
             return JsonResponse({"message": "Success upload member images", "statusCode": 201}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message": "Cannot find member.", "statusCode": 400}, status=400)
         except:
-            return JsonResponse({"message": "Cannot find member", "statusCode": 400}, status=400)
+            return JsonResponse({"message": "There is a problem in saving the 'Twibbon' photo.", "statusCode": 500}, status=500)
     else:
         return JsonResponse({"message": "ONLY POST", "statusCode": 400}, status=400)
