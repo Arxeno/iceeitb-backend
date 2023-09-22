@@ -29,5 +29,6 @@ else:
 
 urlpatterns = [
     path(adminEndpoint, admin.site.urls),
+    path('admin', admin.site.urls),
     path('', include('register.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
