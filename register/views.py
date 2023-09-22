@@ -1,6 +1,8 @@
 from django.http import FileResponse, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+
+from .var import REFERRAL_CODE_LIMIT
 from .models import Competition, ReferralCode, Team, Member
 from django.core.exceptions import ObjectDoesNotExist
 # from .gdrive import drive  # Import the configured PyDrive instance
@@ -59,28 +61,6 @@ def register_multipart(request):
         print('helo')
         additional_message = ''
 
-        if "referralCode" in request_data and request_data['referralCode']:
-            try:
-                referral_code = ReferralCode.objects.get(
-                    code=request_data["referralCode"])
-
-                if (referral_code.is_redeemed):
-                    # additional_message += 'Referral code sudah digunakan.'
-                    return JsonResponse({"message": "Referral code sudah digunakan.", "statusCode": 406}, status=406)
-                else:
-                    referral_code.is_redeemed = True
-                    request_data['referralCode'] = referral_code
-                    referral_code.save()
-            except ObjectDoesNotExist:
-                # additional_message += 'Referral code yang anda masukkan tidak tersedia.'
-                return JsonResponse({"message": "Referral code yang anda masukkan tidak tersedia.", "statusCode": 404}, status=404)
-            except Exception as e:
-                print(e)
-                # additional_message += 'Referral code tidak bisa digunakan.'
-                return JsonResponse({"message": 'Referral code tidak bisa digunakan.', "statusCode": 500}, status=500)
-        else:
-            request_data['referralCode'] = ''
-
         print('one')
         if 'competition' in request_data:
             try:
@@ -88,6 +68,35 @@ def register_multipart(request):
                     name=request_data['competition'])
                 min_capacity = competition.min_capacity
                 max_capacity = competition.max_capacity
+
+                # CHECK REFERRAL CODE
+                if "referralCode" in request_data and request_data['referralCode']:
+                    try:
+                        referral_code = ReferralCode.objects.get(
+                            code=request_data["referralCode"])
+
+                        print(f'COMPETITION NAME: {competition.name}')
+                        print(f'REQUEST: {referral_code.competition.name}')
+                        if (competition.name != referral_code.competition.name):
+                            return JsonResponse({'message': 'Referral code yang diinput tidak dapat digunakan pada cabang lomba ini.', 'statusCode': 400}, status=400)
+
+                        if (referral_code.times_used == REFERRAL_CODE_LIMIT):
+                            # additional_message += 'Referral code sudah digunakan.'
+                            return JsonResponse({"message": "Referral code sudah tidak dapat digunakan.", "statusCode": 406}, status=406)
+                        else:
+                            referral_code.times_used += 1
+                            request_data['referralCode'] = referral_code
+                            request_data["totalPayment"] = 270000
+                            referral_code.save()
+                    except ObjectDoesNotExist:
+                        # additional_message += 'Referral code yang anda masukkan tidak tersedia.'
+                        return JsonResponse({"message": "Referral code yang anda masukkan tidak tersedia.", "statusCode": 404}, status=404)
+                    except Exception as e:
+                        print(e)
+                        # additional_message += 'Referral code tidak bisa digunakan.'
+                        return JsonResponse({"message": 'Referral code tidak bisa digunakan.', "statusCode": 500}, status=500)
+                else:
+                    request_data['referralCode'] = ''
             except ObjectDoesNotExist:
                 return JsonResponse({"message": "Unknown competition.", "statusCode": 404}, status=404)
             except Exception as e:

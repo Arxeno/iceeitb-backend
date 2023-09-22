@@ -38,13 +38,17 @@ CORS_ALLOWED_ORIGINS = [
     'https://iceeitb.site',
     'https://iceeitb.com'
 ]
-
-ALLOWED_HOSTS = [
-    'iceeitb-backend.vercel.app',
-    getenv('FE_URL'),
-    'iceeitb.site',
-    'iceeitb.com'
-]
+if DEBUG:
+    ALLOWED_HOSTS = [
+        'localhost'
+    ]
+else:
+    ALLOWED_HOSTS = [
+        'iceeitb-backend.vercel.app',
+        getenv('FE_URL'),
+        'iceeitb.site',
+        'iceeitb.com'
+    ]
 
 
 # Application definition
@@ -105,17 +109,28 @@ WSGI_APPLICATION = 'icee_backend2.wsgi.app'
 #         'PORT': '5432'
 #     }
 # }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': getenv('DB_NAME'),
-        'USER': getenv('DB_USER'),
-        'PASSWORD': getenv('DB_PASS'),
-        'HOST': getenv('DB_URL'),
-        'PORT': '5432'
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'iceeitb',
+            'USER': 'postgres',
+            'PASSWORD': '123456',
+            'HOST': 'localhost',
+            'PORT': '5432'
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': getenv('DB_NAME'),
+            'USER': getenv('DB_USER'),
+            'PASSWORD': getenv('DB_PASS'),
+            'HOST': getenv('DB_URL'),
+            'PORT': '5432'
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -240,6 +255,9 @@ MINIO_SECRET_KEY = 'c24aB8ygmW2rDYxDDF9PeLKvCFDLwHm66MADQ8d2'
 MINIO_BUCKET_NAME = 'icee-storage'
 
 DEFAULT_FILE_STORAGE = 'register.custom_storage.MinioStorage'
-DJANGO_DOMAIN = getenv('DJANGO_DOMAIN')
+if DEBUG:
+    DJANGO_DOMAIN = 'http://localhost:8000'
+else:
+    DJANGO_DOMAIN = getenv('DJANGO_DOMAIN')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800 * 2

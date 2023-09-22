@@ -22,7 +22,12 @@ from django.conf import settings
 admin.site.site_header = 'ICEE ITB 2024 CMS'
 admin.site.site_title = 'ICEE 2024'
 
+if settings.DEBUG:
+    adminEndpoint = 'admin/'
+else:
+    adminEndpoint = 'admin/'
+
 urlpatterns = [
-    path('admin', admin.site.urls),
+    path(adminEndpoint, admin.site.urls),
     path('', include('register.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
